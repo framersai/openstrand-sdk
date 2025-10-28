@@ -1,0 +1,23 @@
+[project]
+name = "openstrand-sdk"
+version = "0.0.0-dev"
+description = "Shared schema and service contracts for OpenStrand (local mirror placeholder)"
+authors = [{ name = "We Are The Framers", email = "team@wearetheframers.com" }]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.6.0",
+    "typing-extensions>=4.9.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/wearetheframers/openstrand-sdk"
+
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false
