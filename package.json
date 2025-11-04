@@ -1,0 +1,76 @@
+{
+  "name": "@openstrand/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for the OpenStrand knowledge graph APIs.",
+  "author": "OpenStrand Contributors",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./types": {
+      "require": "./dist/types/index.js",
+      "import": "./dist/types/index.mjs",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "lint": "eslint src --ext .ts",
+    "format": "node ../../scripts/run-prettier.mjs --write",
+    "format:check": "node ../../scripts/run-prettier.mjs --check",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "@vitest/coverage-v8": "^1.0.4",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0",
+    "rimraf": "^5.0.5",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "openstrand",
+    "pkms",
+    "knowledge-management",
+    "sdk",
+    "typescript",
+    "api-client"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/framersai/openstrand",
+    "directory": "packages/openstrand-sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/framersai/openstrand/issues"
+  },
+  "homepage": "https://openstrand.ai",
+  "publishConfig": {
+    "access": "public"
+  }
+}

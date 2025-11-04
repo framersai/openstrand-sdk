@@ -1,0 +1,43 @@
+# Test files
+__tests__/
+*.test.ts
+*.spec.ts
+*.test.js
+*.spec.js
+
+# Source files (only dist is published)
+src/
+
+# Configuration
+tsconfig.json
+vitest.config.ts
+.eslintrc.*
+.prettierrc.*
+
+# Development
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Documentation (except README)
+docs/
+*.md
+!README.md
+
+# Misc
+.DS_Store
+Thumbs.db
+.env*
+coverage/
+*.log

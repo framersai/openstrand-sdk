@@ -1,9 +1,0 @@
-README.md
-pyproject.toml
-src/openstrand_sdk/__init__.py
-src/openstrand_sdk.egg-info/PKG-INFO
-src/openstrand_sdk.egg-info/SOURCES.txt
-src/openstrand_sdk.egg-info/dependency_links.txt
-src/openstrand_sdk.egg-info/requires.txt
-src/openstrand_sdk.egg-info/top_level.txt
-src/openstrand_sdk/models/__init__.py
