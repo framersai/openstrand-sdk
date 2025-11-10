@@ -134,6 +134,18 @@ All API methods throw typed errors, making it easy to provide user-friendly mess
 
 ---
 
+## API Docs (TypeDoc)
+
+Generate HTML docs from TSDoc comments:
+
+```bash
+npm install
+npm run docs
+# output: packages/openstrand-sdk/docs/
+```
+
+---
+
 ## Links
 
 - Repository: https://github.com/framersai/openstrand-monorepo
