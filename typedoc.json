@@ -1,0 +1,16 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "out": "docs",
+  "name": "OpenStrand SDK",
+  "includeVersion": true,
+  "tsconfig": "tsconfig.json",
+  "categorizeByGroup": true,
+  "cleanOutputDir": true,
+  "treatWarningsAsErrors": false,
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeInternal": false,
+  "readme": "README.md",
+  "plugin": []
+}
+

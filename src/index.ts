@@ -1,4 +1,5 @@
 /**
+ * @packageDocumentation
  * @fileoverview OpenStrand SDK - TypeScript Client Library
  * @module @openstrand/sdk
  * @description

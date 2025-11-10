@@ -1,8 +1,24 @@
 # @openstrand/sdk
 
-Official TypeScript SDK for the OpenStrand API. Works in Node.js and modern browsers, ships with full type coverage, and mirrors the backend contracts generated from Prisma + Zod.
+<p align="center">
+  <a href="https://github.com/framersai/openstrand-monorepo">
+    <img alt="OpenStrand" height="72" src="https://raw.githubusercontent.com/framersai/openstrand-monorepo/master/openstrand-app/public/logos/openstrand-logo.svg">
+  </a>
+</p>
 
-![npm version](https://img.shields.io/npm/v/@openstrand/sdk) ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+<p align="center">
+  Official TypeScript SDK for the OpenStrand API. Works in Node.js and modern browsers, ships with full type coverage, and mirrors backend contracts.
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@openstrand/sdk">
+    <img src="https://img.shields.io/npm/v/@openstrand/sdk?label=npm&color=%23007ec6" alt="npm version" />
+  </a>
+  <a href="https://github.com/framersai/openstrand-monorepo/actions/workflows/deploy-production.yml">
+    <img src="https://github.com/framersai/openstrand-monorepo/actions/workflows/deploy-production.yml/badge.svg" alt="Build status" />
+  </a>
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT" />
+</p>
 
 ---
 
@@ -21,9 +37,9 @@ pnpm add @openstrand/sdk
 ## Quick Start
 
 ```ts
-import { OpenStrandClient } from '@openstrand/sdk';
+import { OpenStrandSDK } from '@openstrand/sdk';
 
-const sdk = new OpenStrandClient({
+const sdk = new OpenStrandSDK({
   apiUrl: process.env.OPENSTRAND_API_URL ?? 'http://localhost:8000',
 });
 
@@ -61,7 +77,7 @@ console.info('strand-id', strand.id);
 ## Configuration Options
 
 ```ts
-const sdk = new OpenStrandClient({
+const sdk = new OpenStrandSDK({
   apiUrl: 'http://localhost:8000',
   token: process.env.OPENSTRAND_TOKEN, // optional
   timeout: 30_000,
@@ -120,8 +136,8 @@ All API methods throw typed errors, making it easy to provide user-friendly mess
 
 ## Links
 
-- Repository: https://github.com/framersai/openstrand
-- Issues: https://github.com/framersai/openstrand/issues
-- Documentation: https://github.com/framersai/openstrand/tree/main/docs
+- Repository: https://github.com/framersai/openstrand-monorepo
+- Issues: https://github.com/framersai/openstrand-monorepo/issues
+- Documentation: https://github.com/framersai/openstrand-monorepo/tree/master/docs
 
 MIT © OpenStrand Contributors
