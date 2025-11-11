@@ -571,6 +571,9 @@ export interface SDKConfig {
   
   /** Authentication token */
   token?: string;
+
+  /** API key for x-api-key auth (takes precedence over token) */
+  apiKey?: string;
   
   /** Request timeout in milliseconds */
   timeout?: number;

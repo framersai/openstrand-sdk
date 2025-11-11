@@ -78,6 +78,8 @@ import {
 export class OpenStrandSDK {
   private config: Required<SDKConfig>;
   private token?: string;
+  private apiKey?: string;
+  private _capabilities?: any;
 
   /**
    * Create new SDK instance
@@ -99,11 +101,13 @@ export class OpenStrandSDK {
     };
 
     this.token = config.token;
+    this.apiKey = (config as any).apiKey;
 
     if (this.config.debug) {
       console.log('[OpenStrandSDK] Initialized with config:', {
         apiUrl: this.config.apiUrl,
         hasToken: !!this.token,
+        hasApiKey: !!this.apiKey,
       });
     }
   }
@@ -123,6 +127,16 @@ export class OpenStrandSDK {
     this.token = token;
     if (this.config.debug) {
       console.log('[OpenStrandSDK] Token set');
+    }
+  }
+
+  /**
+   * Set API key (x-api-key). Takes precedence over bearer token.
+   */
+  setApiKey(apiKey: string): void {
+    this.apiKey = apiKey;
+    if (this.config.debug) {
+      console.log('[OpenStrandSDK] API key set');
     }
   }
 
@@ -152,7 +166,11 @@ export class OpenStrandSDK {
       ...((options.headers as Record<string, string>) || {}),
     };
 
-    if (this.token) {
+    // Precedence: API key over bearer token
+    if (this.apiKey) {
+      headers['x-api-key'] = this.apiKey;
+      delete headers['Authorization'];
+    } else if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
@@ -188,6 +206,23 @@ export class OpenStrandSDK {
         throw error;
       }
       throw new NetworkError((error as Error).message);
+    }
+  }
+
+  /**
+   * Load and cache backend capabilities
+   */
+  async getCapabilities(): Promise<any> {
+    if (this._capabilities) return this._capabilities;
+    try {
+      const caps = await this.request<any>('/api/v1/meta/capabilities');
+      this._capabilities = caps;
+      return caps;
+    } catch (e) {
+      if (this.config.debug) {
+        console.warn('[OpenStrandSDK] Failed to load capabilities', (e as Error).message);
+      }
+      return null;
     }
   }
 
