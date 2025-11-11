@@ -152,4 +152,15 @@ npm run docs
 - Issues: https://github.com/framersai/openstrand-monorepo/issues
 - Documentation: https://github.com/framersai/openstrand-monorepo/tree/master/docs
 
-MIT © OpenStrand Contributors
+---
+
+<p align="center">
+  <strong>Built by</strong><br/>
+  <a href="https://frame.dev">
+    <img src="https://frame.dev/logo.svg" alt="Frame.dev" height="32" />
+  </a>
+</p>
+
+<p align="center">
+  MIT © 2025 <a href="https://frame.dev">Framers</a>
+</p>
