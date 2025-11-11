@@ -1,4 +1,4 @@
-# @openstrand/sdk
+# @framers/openstrand-sdk
 
 <p align="center">
   <a href="https://github.com/framersai/openstrand-monorepo">
@@ -11,8 +11,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@openstrand/sdk">
-    <img src="https://img.shields.io/npm/v/@openstrand/sdk?label=npm&color=%23007ec6" alt="npm version" />
+  <a href="https://www.npmjs.com/package/@framers/openstrand-sdk">
+    <img src="https://img.shields.io/npm/v/@framers/openstrand-sdk?label=npm&color=%23007ec6" alt="npm version" />
   </a>
   <a href="https://github.com/framersai/openstrand-monorepo/actions/workflows/deploy-production.yml">
     <img src="https://github.com/framersai/openstrand-monorepo/actions/workflows/deploy-production.yml/badge.svg" alt="Build status" />
@@ -25,11 +25,11 @@
 ## Installation
 
 ```bash
-npm install @openstrand/sdk
+npm install @framers/openstrand-sdk
 # or
-yarn add @openstrand/sdk
+yarn add @framers/openstrand-sdk
 # or
-pnpm add @openstrand/sdk
+pnpm add @framers/openstrand-sdk
 ```
 
 ---
@@ -37,7 +37,7 @@ pnpm add @openstrand/sdk
 ## Quick Start
 
 ```ts
-import { OpenStrandSDK } from '@openstrand/sdk';
+import { OpenStrandSDK } from '@framers/openstrand-sdk';
 
 const sdk = new OpenStrandSDK({
   apiUrl: process.env.OPENSTRAND_API_URL ?? 'http://localhost:8000',
@@ -99,7 +99,7 @@ const sdk = new OpenStrandSDK({
 ## Error Handling
 
 ```ts
-import { AuthenticationError, NetworkError } from '@openstrand/sdk';
+import { AuthenticationError, NetworkError } from '@framers/openstrand-sdk';
 
 try {
   await sdk.auth.login({ username: 'demo', password: 'wrong-pass' });
@@ -122,7 +122,7 @@ All API methods throw typed errors, making it easy to provide user-friendly mess
 
 ```html
 <script type="module">
-  import { OpenStrandClient } from 'https://cdn.jsdelivr.net/npm/@openstrand/sdk/+esm';
+  import { OpenStrandSDK } from 'https://cdn.jsdelivr.net/npm/@framers/openstrand-sdk/+esm';
 
   const sdk = new OpenStrandClient({
     apiUrl: 'https://api.openstrand.ai',

@@ -1,5 +1,5 @@
 {
-  "name": "@openstrand/sdk",
+  "name": "@framers/openstrand-sdk",
   "version": "0.1.0",
   "description": "TypeScript SDK for the OpenStrand knowledge graph APIs.",
   "author": "Framers <team@frame.dev>",
@@ -75,8 +75,9 @@
   "bugs": {
     "url": "https://github.com/framersai/openstrand-monorepo/issues"
   },
-  "homepage": "https://openstrand.ai",
   "publishConfig": {
-    "access": "public"
-  }
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "homepage": "https://openstrand.ai"
 }
