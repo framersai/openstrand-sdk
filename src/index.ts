@@ -1,7 +1,7 @@
 /**
  * @packageDocumentation
  * @fileoverview OpenStrand SDK - TypeScript Client Library
- * @module @openstrand/sdk
+ * @module @framers/openstrand-sdk
  * @description
  * Official TypeScript SDK for OpenStrand Personal Knowledge Management System.
  * Provides type-safe client for interacting with OpenStrand backend APIs.
@@ -11,7 +11,7 @@
  * 
  * @example
  * ```typescript
- * import { OpenStrandSDK } from '@openstrand/sdk';
+ * import { OpenStrandSDK } from '@framers/openstrand-sdk';
  * 
  * const sdk = new OpenStrandSDK({
  *   apiUrl: 'http://localhost:8000',

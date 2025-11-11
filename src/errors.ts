@@ -1,6 +1,6 @@
 /**
  * @fileoverview SDK Error Classes
- * @module @openstrand/sdk/errors
+ * @module @framers/openstrand-sdk/errors
  */
 
 /**

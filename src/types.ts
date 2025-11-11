@@ -1,6 +1,6 @@
 /**
  * @fileoverview SDK Type Definitions
- * @module @openstrand/sdk/types
+ * @module @framers/openstrand-sdk/types
  * @description
  * Shared type definitions for OpenStrand SDK.
  * These types match the backend API responses and requests.

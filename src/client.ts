@@ -1,7 +1,7 @@
 
 /**
  * @fileoverview OpenStrand SDK Main Client
- * @module @openstrand/sdk/client
+ * @module @framers/openstrand-sdk/client
  * @description
  * Main SDK client class providing access to all OpenStrand API endpoints.
  * 
