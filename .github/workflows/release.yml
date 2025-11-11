@@ -1,14 +1,6 @@
-name: Draft Release
+name: Draft Release (manual)
 
 on:
-  push:
-    branches: [master, main]
-    tags:
-      - 'v*.*.*'
-    paths:
-      - 'package.json'
-      - 'CHANGELOG.md'
-      - '.github/workflows/release.yml'
   workflow_dispatch: {}
 
 jobs:
