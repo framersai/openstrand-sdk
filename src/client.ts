@@ -90,6 +90,7 @@ export class OpenStrandSDK {
     this.config = {
       apiUrl: config.apiUrl,
       token: config.token ?? '',
+      apiKey: config.apiKey ?? '',
       timeout: config.timeout || 30000,
       headers: config.headers || {},
       debug: config.debug || false,
@@ -101,7 +102,7 @@ export class OpenStrandSDK {
     };
 
     this.token = config.token;
-    this.apiKey = (config as any).apiKey;
+    this.apiKey = config.apiKey;
 
     if (this.config.debug) {
       console.log('[OpenStrandSDK] Initialized with config:', {
