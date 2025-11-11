@@ -1,23 +1,28 @@
-name: Release
+name: Draft Release
 
 on:
   push:
     branches: [master, main]
     paths:
       - 'package.json'
-      - 'src/**'
       - 'CHANGELOG.md'
+      - '.github/workflows/release.yml'
+  workflow_dispatch: {}
 
 jobs:
   release:
-    name: Create GitHub Release
+    name: Create/Update Draft Release
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, 'chore(release)') || contains(github.event.head_commit.message, 'bump')
     
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
       
       - name: Get version from package.json
         id: package_version
@@ -26,34 +31,49 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Version: $VERSION"
       
-      - name: Check if tag exists
-        id: check_tag
-        run: |
-          if git rev-parse "v${{ steps.package_version.outputs.version }}" >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-      
-      - name: Create Release
-        if: steps.check_tag.outputs.exists == 'false'
-        uses: actions/create-release@v1
+      - name: Ensure tag exists for version
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.package_version.outputs.version }}
+        run: |
+          if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+            echo "Tag v${VERSION} already exists."
+          else
+            echo "Creating tag v${VERSION}"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag -a "v${VERSION}" -m "release: v${VERSION}"
+            git push origin "v${VERSION}"
+          fi
+
+      - name: Build release notes body
+        id: body
+        env:
+          VERSION: ${{ steps.package_version.outputs.version }}
+        run: |
+          cat > RELEASE_BODY.md << 'EOF'
+          ## @framers/openstrand-sdk v${VERSION}
+          
+          Published to npm: https://www.npmjs.com/package/@framers/openstrand-sdk
+          
+          ### Installation
+          ```bash
+          npm install @framers/openstrand-sdk@${VERSION}
+          ```
+          
+          See CHANGELOG for details:
+          https://github.com/framersai/openstrand-sdk/blob/master/CHANGELOG.md
+          EOF
+          echo "file=RELEASE_BODY.md" >> $GITHUB_OUTPUT
+      
+      - name: Create or Update Draft Release
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: v${{ steps.package_version.outputs.version }}
-          release_name: v${{ steps.package_version.outputs.version }}
-          body: |
-            ## @framers/openstrand-sdk v${{ steps.package_version.outputs.version }}
-            
-            Published to npm: https://www.npmjs.com/package/@framers/openstrand-sdk
-            
-            ### Installation
-            ```bash
-            npm install @framers/openstrand-sdk@${{ steps.package_version.outputs.version }}
-            ```
-            
-            See [CHANGELOG.md](https://github.com/framersai/openstrand-sdk/blob/master/CHANGELOG.md) for details.
-          draft: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ steps.package_version.outputs.version }}
+          name: v${{ steps.package_version.outputs.version }}
+          draft: true
           prerelease: false
+          allowUpdates: true
+          generateReleaseNotes: true
+          bodyFile: ${{ steps.body.outputs.file }}
 
