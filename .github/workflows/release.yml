@@ -3,6 +3,8 @@ name: Draft Release
 on:
   push:
     branches: [master, main]
+    tags:
+      - 'v*.*.*'
     paths:
       - 'package.json'
       - 'CHANGELOG.md'
@@ -50,7 +52,7 @@ jobs:
         env:
           VERSION: ${{ steps.package_version.outputs.version }}
         run: |
-          cat > RELEASE_BODY.md << 'EOF'
+          cat > RELEASE_BODY.md << EOF
           ## @framers/openstrand-sdk v${VERSION}
           
           Published to npm: https://www.npmjs.com/package/@framers/openstrand-sdk
