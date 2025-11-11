@@ -23,7 +23,8 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "assets"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",

@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/framersai/openstrand-monorepo">
-    <img alt="OpenStrand" height="72" src="https://raw.githubusercontent.com/framersai/openstrand-monorepo/master/openstrand-app/public/logos/openstrand-logo.svg">
+    <img alt="OpenStrand" height="72" src="./assets/openstrand-logo.svg">
   </a>
 </p>
 
@@ -170,7 +170,7 @@ npm run docs
 <p align="center">
   <strong>Built by</strong><br/>
   <a href="https://frame.dev">
-    <img src="https://frame.dev/logo.svg" alt="Frame.dev" height="32" />
+    <img src="./assets/frame-dev.svg" alt="Frame.dev" height="32" />
   </a>
 </p>
 
