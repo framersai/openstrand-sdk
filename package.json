@@ -31,8 +31,10 @@
     "lint": "eslint src --ext .ts",
     "format": "node ../../scripts/run-prettier.mjs --write",
     "format:check": "node ../../scripts/run-prettier.mjs --check",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
     "docs": "typedoc"
