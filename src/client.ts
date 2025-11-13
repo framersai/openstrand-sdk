@@ -26,6 +26,8 @@ import type {
   WeaveEdge,
   Visualization,
   CreateVisualizationRequest,
+  VisualizationExportFormat,
+  VisualizationTierInfo,
   ImportResult,
   ExportOptions,
   SearchResponse,
@@ -36,6 +38,10 @@ import type {
   StrandStructureRequest,
   StructureRequestPayload,
   StructureRequestStatus,
+  LeaderboardEntry,
+  DatasetSummary,
+  DatasetPreview,
+  DatasetSchema,
 } from './types';
 
 import {
@@ -175,6 +181,13 @@ export class OpenStrandSDK {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
+    // If body is FormData, let the browser/node set Content-Type (boundary)
+    const isFormDataBody =
+      typeof FormData !== 'undefined' && options.body instanceof FormData;
+    if (isFormDataBody) {
+      delete headers['Content-Type'];
+    }
+
     const requestOptions: RequestInit = {
       ...options,
       headers,
@@ -209,6 +222,205 @@ export class OpenStrandSDK {
       throw new NetworkError((error as Error).message);
     }
   }
+
+  /**
+   * Perform a raw HTTP request (no JSON envelope processing).
+   * Useful for binary/file responses.
+   * @private
+   */
+  private async requestRaw(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<Response> {
+    const url = `${this.config.apiUrl}${endpoint}`;
+
+    const headers: Record<string, string> = {
+      ...this.config.headers,
+      ...((options.headers as Record<string, string>) || {}),
+    };
+
+    if (this.apiKey) {
+      headers['x-api-key'] = this.apiKey;
+      delete headers['Authorization'];
+    } else if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    // Respect FormData bodies
+    const isFormDataBody =
+      typeof FormData !== 'undefined' && options.body instanceof FormData;
+    if (!isFormDataBody && !headers['Content-Type']) {
+      headers['Content-Type'] = 'application/json';
+    } else if (isFormDataBody) {
+      delete headers['Content-Type'];
+    }
+
+    const requestOptions: RequestInit = {
+      ...options,
+      headers,
+    };
+
+    if (this.config.debug) {
+      console.log(`[OpenStrandSDK] RAW ${options.method || 'GET'} ${url}`);
+    }
+
+    const response = await fetch(url, requestOptions);
+    if (!response.ok) {
+      await this.handleError(response);
+    }
+    return response;
+  }
+
+  /**
+   * Meta API
+   */
+  meta = {
+    /**
+     * Get developer links and metadata
+     */
+    developer: (): Promise<{
+      swaggerUrl: string;
+      apiBaseUrl: string;
+      sdkDocsUrl: string;
+      frameSiteUrl: string;
+      teamPortalUrl: string;
+    }> => this.request('/api/v1/meta/developer'),
+
+    /**
+     * Get server configuration summary
+     */
+    config: (): Promise<Record<string, unknown>> => this.request('/api/v1/meta/config'),
+
+    /**
+     * Get version banner
+     */
+    version: (): Promise<{ version: string; api: string; backend: string; features: string[] }> =>
+      this.request('/api/v1/meta/version'),
+
+    /**
+     * Get system diagnostics (cache/queue)
+     */
+    system: (): Promise<Record<string, unknown>> => this.request('/api/v1/meta/system'),
+  };
+
+  /**
+   * Teams & Domains API
+   */
+  teams = {
+    /**
+     * Team API tokens (admin scope)
+     */
+    tokens: {
+      list: (): Promise<{ tokens: Array<Record<string, unknown>>; teams: Array<Record<string, unknown>> }> =>
+        this.request('/api/v1/team-tokens'),
+      create: (payload: { teamId: string; name: string; description?: string; scopes?: string[]; expiresAt?: string }): Promise<{
+        token: Record<string, unknown>;
+        plaintext: string;
+      }> =>
+        this.request('/api/v1/team-tokens', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        }),
+      revoke: (tokenId: string): Promise<Record<string, unknown>> =>
+        this.request(`/api/v1/team-tokens/${tokenId}`, { method: 'DELETE' }),
+    },
+
+    /**
+     * Custom domains (Team+)
+     */
+    domains: {
+      add: (payload: { teamId: string; domain: string; type?: 'subdomain' | 'custom' }): Promise<Record<string, unknown>> =>
+        this.request('/api/v1/domains', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        }),
+      verify: (id: string): Promise<{ verified: boolean }> =>
+        this.request(`/api/v1/domains/${id}/verify`, { method: 'POST' }),
+      setupSSL: (id: string): Promise<{ configured: boolean }> =>
+        this.request(`/api/v1/domains/${id}/ssl`, { method: 'POST' }),
+      nginxConfig: async (id: string): Promise<string> => {
+        const res = await this.requestRaw(`/api/v1/domains/${id}/nginx`, { method: 'GET' });
+        return res.text();
+      },
+    },
+  };
+
+  /**
+   * Weave Advanced API
+   */
+  weaveAdvanced = {
+    /**
+     * Get a filtered graph segment for a weave
+     */
+    graph: (
+      weaveId: string,
+      options?: { types?: string[]; cluster?: boolean; limit?: number; depth?: number; bounds?: { center: { x: number; y: number; z?: number }; radius: number } },
+    ): Promise<Record<string, unknown>> => {
+      const params = new URLSearchParams();
+      if (options?.types?.length) params.set('types', options.types.join(','));
+      if (options?.cluster) params.set('cluster', 'true');
+      if (typeof options?.limit === 'number') params.set('limit', String(options.limit));
+      if (typeof options?.depth === 'number') params.set('depth', String(options.depth));
+      if (options?.bounds) {
+        params.set('cx', String(options.bounds.center.x));
+        params.set('cy', String(options.bounds.center.y));
+        if (typeof options.bounds.center.z === 'number') params.set('cz', String(options.bounds.center.z));
+        params.set('radius', String(options.bounds.radius));
+      }
+      return this.request(`/api/v1/weaves/${weaveId}/graph?${params.toString()}`);
+    },
+
+    /**
+     * Find paths between two nodes
+     */
+    findPaths: (weaveId: string, from: string, to: string, maxDepth?: number): Promise<Record<string, unknown>> => {
+      const params = new URLSearchParams({ from, to });
+      if (typeof maxDepth === 'number') params.set('maxDepth', String(maxDepth));
+      return this.request(`/api/v1/weaves/${weaveId}/paths?${params.toString()}`);
+    },
+
+    /**
+     * Detect clusters in a weave
+     */
+    clusters: (weaveId: string): Promise<string[][]> => this.request(`/api/v1/weaves/${weaveId}/clusters`),
+
+    /**
+     * Apply layout algorithm
+     */
+    applyLayout: (
+      weaveId: string,
+      algorithm: 'force' | 'circular' | 'hierarchical',
+      options?: Record<string, unknown>,
+    ): Promise<Record<string, unknown>> =>
+      this.request(`/api/v1/weaves/${weaveId}/layout`, {
+        method: 'POST',
+        body: JSON.stringify({ algorithm, options }),
+      }),
+
+    /**
+     * Node operations
+     */
+    nodes: {
+      create: (weaveId: string, payload: Record<string, unknown>): Promise<Record<string, unknown>> =>
+        this.request(`/api/v1/weaves/${weaveId}/nodes`, { method: 'POST', body: JSON.stringify(payload) }),
+      update: (weaveId: string, nodeId: string, payload: Record<string, unknown>): Promise<Record<string, unknown>> =>
+        this.request(`/api/v1/weaves/${weaveId}/nodes/${nodeId}`, { method: 'PATCH', body: JSON.stringify(payload) }),
+      delete: (weaveId: string, nodeId: string): Promise<Record<string, unknown>> =>
+        this.request(`/api/v1/weaves/${weaveId}/nodes/${nodeId}`, { method: 'DELETE' }),
+    },
+
+    /**
+     * Edge operations
+     */
+    edges: {
+      create: (weaveId: string, payload: Record<string, unknown>): Promise<Record<string, unknown>> =>
+        this.request(`/api/v1/weaves/${weaveId}/edges`, { method: 'POST', body: JSON.stringify(payload) }),
+      update: (weaveId: string, edgeId: string, payload: Record<string, unknown>): Promise<Record<string, unknown>> =>
+        this.request(`/api/v1/weaves/${weaveId}/edges/${edgeId}`, { method: 'PATCH', body: JSON.stringify(payload) }),
+      delete: (weaveId: string, edgeId: string): Promise<Record<string, unknown>> =>
+        this.request(`/api/v1/weaves/${weaveId}/edges/${edgeId}`, { method: 'DELETE' }),
+    },
+  };
 
   /**
    * Load and cache backend capabilities
@@ -612,6 +824,190 @@ export class OpenStrandSDK {
       if (options?.tier) params.set('tier', options.tier.toString());
 
       return this.request(`/api/v1/visualizations?${params.toString()}`);
+    },
+
+    /**
+     * Update visualization
+     * @param id - Visualization ID
+     * @param data - Partial visualization update
+     */
+    update: (id: string, data: Partial<CreateVisualizationRequest>): Promise<Visualization> => {
+      return this.request(`/api/v1/visualizations/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+    },
+
+    /**
+     * Delete visualization
+     * @param id - Visualization ID
+     */
+    delete: (id: string): Promise<void> => {
+      return this.request(`/api/v1/visualizations/${id}`, { method: 'DELETE' });
+    },
+
+    /**
+     * Export visualization as PNG, SVG, or JSON.
+     * Returns a Blob for 'png' and 'svg', and a JSON Blob for 'json'.
+     */
+    export: async (id: string, format: VisualizationExportFormat = 'json'): Promise<Blob> => {
+      const response = await this.requestRaw(`/api/v1/visualizations/${id}/export`, {
+        method: 'POST',
+        body: JSON.stringify({ format }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      return await response.blob();
+    },
+
+    /**
+     * Get information about available visualization tiers.
+     */
+    tierInfo: (): Promise<VisualizationTierInfo> => {
+      return this.request('/api/v1/visualizations/tier-info');
+    },
+  };
+
+  /**
+   * Featured content and leaderboards API
+   */
+  featured = {
+    /**
+     * Get a curated set of featured content for the landing experience.
+     */
+    list: (): Promise<Record<string, unknown>> => {
+      return this.request('/api/v1/featured');
+    },
+
+    /**
+     * Get leaderboard for content.
+     * @param options - Filter options
+     * @example
+     * ```ts
+     * await sdk.featured.leaderboard({ type: 'visualization', period: 'week', limit: 10 });
+     * ```
+     */
+    leaderboard: (options?: { type?: string; period?: 'day' | 'week' | 'month' | 'all'; limit?: number }): Promise<LeaderboardEntry[]> => {
+      const params = new URLSearchParams();
+      if (options?.type) params.set('type', options.type);
+      if (options?.period) params.set('period', options.period);
+      if (options?.limit) params.set('limit', String(options.limit));
+      return this.request(`/api/v1/leaderboard?${params.toString()}`);
+    },
+  };
+
+  /**
+   * Data / Dataset API
+   */
+  data = {
+    /**
+     * Upload dataset file.
+     * Returns datasetId and basic metadata.
+     */
+    upload: async (file: File | Blob, metadata?: Record<string, unknown>): Promise<{ datasetId: string; metadata: Record<string, unknown> }> => {
+      const form = new FormData();
+      form.append('file', file);
+      if (metadata) {
+        form.append('metadata', JSON.stringify(metadata));
+      }
+      return this.request('/api/v1/data/upload', {
+        method: 'POST',
+        body: form,
+      });
+    },
+
+    /**
+     * Get dataset summary.
+     */
+    summary: (datasetId: string): Promise<DatasetSummary> => {
+      return this.request(`/api/v1/data/${datasetId}/summary`);
+    },
+
+    /**
+     * Get dataset preview rows.
+     */
+    preview: (datasetId: string, rows: number = 10): Promise<DatasetPreview> => {
+      const params = new URLSearchParams();
+      if (rows) params.set('rows', String(rows));
+      return this.request(`/api/v1/data/${datasetId}/preview?${params.toString()}`);
+    },
+
+    /**
+     * Analyze dataset schema.
+     */
+    schema: (datasetId: string): Promise<DatasetSchema> => {
+      return this.request(`/api/v1/data/${datasetId}/schema`);
+    },
+
+    /**
+     * Generate a visualization for a dataset by prompt.
+     */
+    visualize: (datasetId: string, prompt: string, options?: Record<string, unknown>): Promise<Visualization> => {
+      return this.request(`/api/v1/data/${datasetId}/visualize`, {
+        method: 'POST',
+        body: JSON.stringify({ prompt, options }),
+      });
+    },
+
+    /**
+     * Check for duplicate content by uploading a small file sample.
+     */
+    checkDuplicate: async (file: File | Blob): Promise<{ isDuplicate: boolean; hash?: string; similarity?: number }> => {
+      const form = new FormData();
+      form.append('file', file);
+      return this.request('/api/v1/data/check-duplicate', {
+        method: 'POST',
+        body: form,
+      });
+    },
+  };
+
+  /**
+   * Feedback API (votes, favorites, summaries).
+   */
+  feedback = {
+    /**
+     * Upvote strand (visualization, dataset, document, etc.).
+     */
+    upvote: (strandId: string): Promise<{ message: string }> => {
+      return this.request(`/api/v1/strands/${strandId}/vote`, {
+        method: 'POST',
+        body: JSON.stringify({ vote: 1 }),
+      });
+    },
+
+    /**
+     * Downvote strand.
+     */
+    downvote: (strandId: string): Promise<{ message: string }> => {
+      return this.request(`/api/v1/strands/${strandId}/vote`, {
+        method: 'POST',
+        body: JSON.stringify({ vote: -1 }),
+      });
+    },
+
+    /**
+     * Toggle favorite for current user.
+     */
+    toggleFavorite: (strandId: string): Promise<{ favorited: boolean }> => {
+      return this.request(`/api/v1/strands/${strandId}/favorite`, {
+        method: 'POST',
+      });
+    },
+
+    /**
+     * Get feedback summary for a strand.
+     */
+    summary: (strandId: string): Promise<{
+      targetId: string;
+      datasetId?: string;
+      likes: number;
+      dislikes: number;
+      favorites: number;
+      score: number;
+      userVote: number | null;
+      userFavorite: boolean;
+    }> => {
+      return this.request(`/api/v1/strands/${strandId}/feedback`);
     },
   };
 

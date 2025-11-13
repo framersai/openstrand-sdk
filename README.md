@@ -87,6 +87,86 @@ console.info('strand-id', strand.id);
 
 ---
 
+## Visualizations
+
+Create, list, update, delete, export, and inspect tier availability.
+
+```ts
+import { OpenStrandSDK } from '@framers/openstrand-sdk';
+
+const sdk = new OpenStrandSDK({ apiUrl: 'http://localhost:8000' });
+
+// Create from a prompt (optionally attach a datasetId and tier)
+const viz = await sdk.visualizations.create({
+  prompt: 'Bar chart of revenue by month',
+  datasetId: 'ds_123',
+  tier: 1,
+});
+
+// Paginate list
+const { items } = await sdk.visualizations.list({ page: 1, pageSize: 20 });
+
+// Update
+const updated = await sdk.visualizations.update(viz.id, { options: { color: 'teal' } });
+
+// Export (Blob)
+const svg = await sdk.visualizations.export(viz.id, 'svg');
+
+// Delete
+await sdk.visualizations.delete(viz.id);
+
+// Tier info
+const tiers = await sdk.visualizations.tierInfo();
+```
+
+---
+
+## Data & Feedback
+
+```ts
+// Upload a dataset
+const { datasetId, metadata } = await sdk.data.upload(file);
+
+// Summary and preview
+const summary = await sdk.data.summary(datasetId);
+const preview = await sdk.data.preview(datasetId, 20);
+
+// Schema intelligence
+const schema = await sdk.data.schema(datasetId);
+
+// Prompt a visualization for the dataset
+const viz = await sdk.data.visualize(datasetId, 'Line chart of sales by day');
+
+// Feedback
+await sdk.feedback.upvote(viz.id);
+const fb = await sdk.feedback.summary(viz.id);
+```
+
+---
+
+## Meta, Featured, Teams & Domains, Weave Advanced
+
+```ts
+// Meta and docs links
+const meta = await sdk.meta.developer();
+
+// Featured/leaderboard
+const featured = await sdk.featured.list();
+const leaderboard = await sdk.featured.leaderboard({ period: 'week', limit: 10 });
+
+// Team API tokens (Team+)
+const tokens = await sdk.teams.tokens.list();
+
+// Custom domains (Team+)
+await sdk.teams.domains.add({ teamId: 't_123', domain: 'example.com' });
+
+// Weave (graph) advanced
+const segment = await sdk.weaveAdvanced.graph('weave_123', { cluster: true, limit: 200 });
+const paths = await sdk.weaveAdvanced.findPaths('weave_123', 'nodeA', 'nodeB', 4);
+```
+
+---
+
 ## Configuration Options
 
 ```ts

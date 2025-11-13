@@ -436,6 +436,11 @@ export interface Visualization {
 }
 
 /**
+ * Supported export formats for visualizations.
+ */
+export type VisualizationExportFormat = 'png' | 'svg' | 'json';
+
+/**
  * Create visualization request
  */
 export interface CreateVisualizationRequest {
@@ -443,6 +448,21 @@ export interface CreateVisualizationRequest {
   datasetId?: string;
   tier?: VisualizationTier;
   options?: Record<string, any>;
+}
+
+/**
+ * Tier information for visualization capabilities.
+ * Mirrors `/api/v1/visualizations/tier-info` response.
+ */
+export interface VisualizationTierInfo {
+  tiers: Array<{
+    level: 1 | 2 | 3;
+    name: string;
+    description: string;
+    features: string[];
+    available: boolean;
+    requirements?: string;
+  }>;
 }
 
 // ============================================================================
@@ -506,6 +526,51 @@ export interface SearchResponse {
   page: number;
   pageSize: number;
   totalPages: number;
+}
+
+/**
+ * Leaderboard entry (featured content ranking).
+ */
+export interface LeaderboardEntry {
+  targetId: string;
+  datasetId?: string;
+  label: string;
+  likes: number;
+  dislikes: number;
+  favorites: number;
+  score: number;
+}
+
+// ============================================================================
+// Data / Datasets Types
+// ============================================================================
+
+export interface DatasetPreview {
+  rows: Array<Record<string, unknown>>;
+}
+
+export interface DatasetSchema {
+  columns: Array<{
+    name: string;
+    type: string;
+    semanticTags?: string[];
+    stats?: Record<string, unknown>;
+  }>;
+}
+
+export interface DatasetSummary {
+  datasetId: string;
+  generatedAt: string;
+  rowCount: number;
+  columnCount: number;
+  columns: Array<{
+    name: string;
+    type: string;
+    sampleValues: unknown[];
+    stats?: Record<string, unknown>;
+    semanticTags?: string[];
+  }>;
+  notes?: string | null;
 }
 
 // ============================================================================
