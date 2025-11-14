@@ -45,6 +45,7 @@ export * from './modules/factCheck.module';
 export * from './modules/enrichment.module';
 export * from './modules/plugins.module';
 export * from './modules/wizard.module';
+export * from './modules/dataIntelligence.module';
 
 // Legacy exports (if they exist)
 export * from './types';

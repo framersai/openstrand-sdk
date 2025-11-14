@@ -31,6 +31,7 @@ import { FactCheckModule } from './modules/factCheck.module';
 import { EnrichmentModule } from './modules/enrichment.module';
 import { PluginsModule } from './modules/plugins.module';
 import { WizardModule } from './modules/wizard.module';
+import { DataIntelligenceModule } from './modules/dataIntelligence.module';
 
 /**
  * OpenStrand SDK configuration
@@ -70,6 +71,7 @@ export class OpenStrandSDK {
   public enrichment: EnrichmentModule;
   public plugins: PluginsModule;
   public wizard: WizardModule;
+  public dataIntelligence: DataIntelligenceModule;
 
   constructor(config: OpenStrandSDKConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, ''); // Remove trailing slash
@@ -82,6 +84,7 @@ export class OpenStrandSDK {
     this.enrichment = new EnrichmentModule(this);
     this.plugins = new PluginsModule(this);
     this.wizard = new WizardModule(this);
+    this.dataIntelligence = new DataIntelligenceModule(this);
   }
 
   /**
