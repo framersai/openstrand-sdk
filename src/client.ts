@@ -33,6 +33,7 @@ import { PluginsModule } from './modules/plugins.module';
 import { WizardModule } from './modules/wizard.module';
 import { RagModule } from './modules/rag.module';
 import { DataIntelligenceModule } from './modules/dataIntelligence.module';
+import { CostModule } from './modules/cost.module';
 
 /**
  * OpenStrand SDK configuration
@@ -74,6 +75,7 @@ export class OpenStrandSDK {
   public wizard: WizardModule;
   public dataIntelligence: DataIntelligenceModule;
   public rag: RagModule;
+  public cost: CostModule;
 
   constructor(config: OpenStrandSDKConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, ''); // Remove trailing slash
@@ -88,6 +90,7 @@ export class OpenStrandSDK {
     this.wizard = new WizardModule(this);
     this.dataIntelligence = new DataIntelligenceModule(this);
     this.rag = new RagModule(this);
+    this.cost = new CostModule(this);
   }
 
   /**
