@@ -46,6 +46,8 @@ export * from './modules/enrichment.module';
 export * from './modules/plugins.module';
 export * from './modules/wizard.module';
 export * from './modules/dataIntelligence.module';
+export * from './modules/ner';
+export * from './modules/summarization';
 
 // Legacy exports (if they exist)
 export * from './types';

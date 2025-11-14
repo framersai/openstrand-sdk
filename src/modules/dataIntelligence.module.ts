@@ -297,9 +297,46 @@ function tfIdf(termCount: number, docCount: number, totalDocs: number): number {
   return parseFloat((tf * idf).toFixed(4));
 }
 
+/**
+ * Extract entities from text using production NER.
+ * 
+ * Attempts to use wink-nlp for high-quality extraction, falls back to regex if unavailable.
+ * 
+ * @param text - Text to analyze
+ * @param stopWords - Stop words to filter out
+ * @returns Array of entity candidates
+ * @private
+ */
 function extractEntities(text: string, stopWords: Set<string>): EntityCandidate[] {
+  if (!text) return [];
+
+  try {
+    // Try wink-nlp (Node.js/backend)
+    const { extractEntities: extractWithNER } = require('./ner');
+    const entities = extractWithNER(text, { minConfidence: 0.6 });
+    
+    // Convert to EntityCandidate format
+    return entities
+      .filter((e: any) => !stopWords.has(e.value.toLowerCase()))
+      .map((e: any) => ({
+        value: e.value,
+        type: e.type,
+        count: e.count,
+        confidence: e.confidence,
+      }));
+  } catch {
+    // Fallback to regex-based extraction
+    return extractEntitiesRegex(text, stopWords);
+  }
+}
+
+/**
+ * Regex-based entity extraction (fallback for browser/lightweight environments).
+ * 
+ * @private
+ */
+function extractEntitiesRegex(text: string, stopWords: Set<string>): EntityCandidate[] {
   const entities: EntityCandidate[] = [];
-  if (!text) return entities;
 
   const titleCaseMatches = text.matchAll(ENTITY_PATTERN);
   for (const match of titleCaseMatches) {
@@ -330,6 +367,11 @@ function extractEntities(text: string, stopWords: Set<string>): EntityCandidate[
   return entities;
 }
 
+/**
+ * Infer entity type from text using heuristics.
+ * 
+ * @private
+ */
 function inferEntityType(value: string): EntityCandidate['type'] {
   if (/\b(Inc|Corp|LLC|Ltd)\b/.test(value)) return 'organization';
   if (/\b(University|College|Institute)\b/.test(value)) return 'organization';
