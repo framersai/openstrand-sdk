@@ -77,7 +77,7 @@ export function extractEntities(
     includeKeywords?: boolean;
   } = {}
 ): Entity[] {
-  const { minConfidence = 0.6, includeKeywords = true } = options;
+  const { minConfidence = 0.6 } = options;
 
   try {
     // Try wink-nlp first (Node.js/Electron)
