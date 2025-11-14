@@ -36,7 +36,17 @@
  * @since 1.0.0
  */
 
+// Main client
 export * from './client';
+
+// Modules
+export * from './modules/templates.module';
+export * from './modules/factCheck.module';
+export * from './modules/enrichment.module';
+export * from './modules/plugins.module';
+export * from './modules/wizard.module';
+
+// Legacy exports (if they exist)
 export * from './types';
 export * from './errors';
 
