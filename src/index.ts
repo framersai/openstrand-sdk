@@ -48,6 +48,7 @@ export * from './modules/wizard.module';
 export * from './modules/dataIntelligence.module';
 export * from './modules/ner';
 export * from './modules/summarization';
+export * from './modules/rag.module';
 
 // Legacy exports (if they exist)
 export * from './types';
