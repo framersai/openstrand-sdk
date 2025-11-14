@@ -5,6 +5,30 @@
  * the backend and SDK. Everything runs locally—no LLM dependency required.
  *
  * @module modules/data-intelligence
+ * @author Framers <team@frame.dev>
+ * @since 1.3.0
+ * @license MIT
+ * 
+ * @example
+ * ```typescript
+ * import { OpenStrandSDK } from '@framers/openstrand-sdk';
+ * 
+ * const sdk = new OpenStrandSDK({ baseUrl: 'http://localhost:8000' });
+ * 
+ * // Local analysis (instant, offline)
+ * const vocab = sdk.dataIntelligence.summarizeLocal([
+ *   { id: '1', text: 'OpenStrand enables civic research.' },
+ *   { id: '2', text: 'Researchers build vocabularies with OpenStrand.' }
+ * ]);
+ * 
+ * console.log(vocab.terms); // [{ term: 'openstrand', count: 2, score: 1.23 }, ...]
+ * 
+ * // Remote analysis (with caching + optional LLM verification)
+ * const vocabRemote = await sdk.dataIntelligence.summarizeRemote({
+ *   documents: [...],
+ *   options: { maxTerms: 100 }
+ * });
+ * ```
  */
 
 import type { OpenStrandSDK } from '../client';
@@ -102,6 +126,31 @@ const ACRONYM_PATTERN = /\b([A-Z]{2,})\b/g;
 
 /**
  * Build deterministic vocabulary summary for a set of documents.
+ * 
+ * Uses TF/IDF scoring to rank terms by importance, extracts bigrams (two-word phrases),
+ * and identifies entities via regex patterns. Runs entirely offline with zero LLM dependency.
+ * 
+ * @param documents - Array of documents to analyze
+ * @param options - Configuration options (term limits, stop words, etc.)
+ * @returns Vocabulary summary with ranked terms, bigrams, and entities
+ * @throws {Error} If documents array is empty
+ * 
+ * @example
+ * ```typescript
+ * const summary = buildVocabularySummary([
+ *   { id: 'doc1', text: 'OpenStrand enables research teams.' },
+ *   { id: 'doc2', text: 'Research teams build vocabularies.' }
+ * ], {
+ *   maxTerms: 50,
+ *   maxBigrams: 25,
+ *   minTermLength: 3
+ * });
+ * 
+ * console.log(summary.terms[0]); // { term: 'research', count: 2, score: 1.45 }
+ * console.log(summary.entities[0]); // { value: 'OpenStrand', type: 'organization', confidence: 0.7 }
+ * ```
+ * 
+ * @public
  */
 export function buildVocabularySummary(
   documents: VocabularyDocument[],
@@ -292,12 +341,30 @@ function inferEntityType(value: string): EntityCandidate['type'] {
 /**
  * Client wrapper that exposes both local (deterministic) helpers and
  * the remote `/api/v1/intelligence/*` endpoints.
+ * 
+ * @public
  */
 export class DataIntelligenceModule {
   constructor(private sdk: OpenStrandSDK) {}
 
   /**
    * Run vocabulary analysis locally (shared logic with backend service).
+   * 
+   * This method executes instantly and works offline. Perfect for Community Edition
+   * or when you want immediate results without backend round-trip.
+   * 
+   * @param documents - Documents to analyze
+   * @param options - Analysis options
+   * @returns Vocabulary summary with terms, bigrams, and entities
+   * 
+   * @example
+   * ```typescript
+   * const vocab = sdk.dataIntelligence.summarizeLocal([
+   *   { id: '1', text: 'Machine learning research notes' }
+   * ]);
+   * ```
+   * 
+   * @public
    */
   summarizeLocal(
     documents: VocabularyDocument[],
@@ -308,6 +375,22 @@ export class DataIntelligenceModule {
 
   /**
    * Request vocabulary analysis from the backend (RBAC + persistence).
+   * 
+   * Backend caches results and supports LLM verification (Teams Edition).
+   * Use this when you need team-wide summaries or want to enable optional AI enrichment.
+   * 
+   * @param payload - Request payload with documents and options
+   * @returns Promise resolving to vocabulary summary
+   * 
+   * @example
+   * ```typescript
+   * const vocab = await sdk.dataIntelligence.summarizeRemote({
+   *   documents: [...],
+   *   options: { maxTerms: 100, enableLLMVerification: true }
+   * });
+   * ```
+   * 
+   * @public
    */
   async summarizeRemote(payload: {
     documents: VocabularyDocument[];
@@ -320,6 +403,25 @@ export class DataIntelligenceModule {
 
   /**
    * Ask the backend to run schema analysis on a dataset (heuristics + optional AI).
+   * 
+   * Analyzes CSV/JSON data to infer column types, detect relationships, suggest visualizations,
+   * and compute quality scores. Supports dual-mode analysis (fast heuristics + optional LLM).
+   * 
+   * @param payload - Dataset rows and analysis options
+   * @returns Promise resolving to analysis results (heuristic, AI, and combined)
+   * 
+   * @example
+   * ```typescript
+   * const analysis = await sdk.dataIntelligence.analyzeDataset({
+   *   rows: csvData,
+   *   options: { useHeuristics: true, useAI: false }
+   * });
+   * 
+   * console.log(analysis.heuristic.columns); // Column type inference
+   * console.log(analysis.heuristic.suggestions.visualizations); // Chart recommendations
+   * ```
+   * 
+   * @public
    */
   async analyzeDataset(
     payload: DatasetAnalysisRequest
