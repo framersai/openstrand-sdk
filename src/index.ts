@@ -50,6 +50,8 @@ export * from './modules/ner';
 export * from './modules/summarization';
 export * from './modules/rag.module';
 export * from './modules/cost.module';
+export * from './modules/analytics.module';
+export * from './modules/illustrations.module';
 
 // Legacy exports (if they exist)
 export * from './types';

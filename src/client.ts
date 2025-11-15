@@ -34,6 +34,8 @@ import { WizardModule } from './modules/wizard.module';
 import { RagModule } from './modules/rag.module';
 import { DataIntelligenceModule } from './modules/dataIntelligence.module';
 import { CostModule } from './modules/cost.module';
+import { AnalyticsModule } from './modules/analytics.module';
+import { IllustrationsModule } from './modules/illustrations.module';
 
 /**
  * OpenStrand SDK configuration
@@ -76,6 +78,14 @@ export class OpenStrandSDK {
   public dataIntelligence: DataIntelligenceModule;
   public rag: RagModule;
   public cost: CostModule;
+  /**
+   * Strand → Loom → Weave analytics helper.
+   */
+  public analytics: AnalyticsModule;
+  /**
+   * Illustration generation and batch workflows.
+   */
+  public illustrations: IllustrationsModule;
 
   constructor(config: OpenStrandSDKConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, ''); // Remove trailing slash
@@ -91,6 +101,8 @@ export class OpenStrandSDK {
     this.dataIntelligence = new DataIntelligenceModule(this);
     this.rag = new RagModule(this);
     this.cost = new CostModule(this);
+    this.analytics = new AnalyticsModule(this);
+    this.illustrations = new IllustrationsModule(this);
   }
 
   /**
@@ -124,24 +136,35 @@ export class OpenStrandSDK {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
-    // Make request
-    const response = await fetch(url.toString(), {
-      method,
-      headers,
-      body: options?.body ? JSON.stringify(options.body) : undefined,
-      signal: AbortSignal.timeout(this.timeout),
-    });
+    try {
+      const fetchPromise = fetch(url.toString(), {
+        method,
+        headers,
+        body: options?.body ? JSON.stringify(options.body) : undefined,
+      });
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: response.statusText }));
-      throw new OpenStrandSDKError(
-        error.message || `HTTP ${response.status}`,
-        response.status,
-        error
-      );
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(
+          () => reject(new OpenStrandSDKError('Request timed out', 408)),
+          this.timeout,
+        );
+      });
+
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: response.statusText }));
+        throw new OpenStrandSDKError(
+          error.message || `HTTP ${response.status}`,
+          response.status,
+          error
+        );
+      }
+
+      return response.json();
+    } catch (err: any) {
+      throw err;
     }
-
-    return response.json();
   }
 
   /**
