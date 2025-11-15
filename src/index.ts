@@ -54,8 +54,79 @@ export * from './modules/analytics.module';
 export * from './modules/illustrations.module';
 export * from './modules/learning.module';
 
-// Legacy exports (if they exist)
-export * from './types';
+// Explicitly export data intelligence types & functions for backend use
+export {
+  buildVocabularySummary,
+  type DatasetAnalysisRequest,
+  type DatasetAnalysisResult,
+  type VocabularyDocument,
+  type VocabularyOptions,
+  type VocabularySummary,
+  type VocabularyTerm,
+  type EntityCandidate,
+  type SchemaAnalysis,
+  type SchemaAnalysisOptions,
+} from './modules/dataIntelligence.module';
+
+// Core types
+export type {
+  UserRole,
+  UserPlan,
+  AuthProvider,
+  StrandType,
+  Visibility,
+  VisualizationTier,
+  StrandLinkType,
+  LinkProvenance,
+  HierarchyScopeType,
+  StructureRequestType,
+  StructureRequestStatus,
+  User,
+  UserSession,
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  MagicLinkRequest,
+  MagicLinkVerify,
+  Strand,
+  StrandSummary,
+  StrandRelationship,
+  StrandLinkEdge,
+  StrandLinkSummary,
+  StrandHierarchyNode,
+  StrandVisibilitySnapshot,
+  StrandAccessPermission,
+  StrandStructureRequest,
+  StructureRequestPayload,
+  CreateStrandRequest,
+  UpdateStrandRequest,
+  Collection,
+  CreateCollectionRequest,
+  WeaveNode,
+  WeaveEdge,
+  Weave,
+  Visualization,
+  VisualizationExportFormat,
+  CreateVisualizationRequest,
+  VisualizationTierInfo,
+  ImportResult,
+  ExportFormat,
+  ExportOptions,
+  SearchResult,
+  SearchResponse,
+  LeaderboardEntry,
+  DatasetPreview,
+  DatasetSchema,
+  DatasetSummary,
+  PaginatedResponse,
+  PaginationOptions,
+  ApiSuccess,
+  ApiError,
+  ApiResponse,
+  SDKConfig,
+} from './types';
+
+// Errors
 export * from './errors';
 
 // Re-export main client as default

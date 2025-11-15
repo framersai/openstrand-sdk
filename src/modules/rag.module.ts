@@ -36,11 +36,12 @@
  */
 
 import type { OpenStrandSDK } from '../client';
+import type { SearchResult } from '../types';
 
 /**
- * Search result chunk
+ * RAG search result chunk
  */
-export interface SearchResult {
+export interface RagSearchChunk {
   id: string;
   text: string;
   strandId?: string;
