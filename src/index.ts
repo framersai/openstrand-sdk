@@ -52,6 +52,7 @@ export * from './modules/rag.module';
 export * from './modules/cost.module';
 export * from './modules/analytics.module';
 export * from './modules/illustrations.module';
+export * from './modules/learning.module';
 
 // Legacy exports (if they exist)
 export * from './types';

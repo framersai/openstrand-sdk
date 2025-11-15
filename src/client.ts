@@ -36,6 +36,7 @@ import { DataIntelligenceModule } from './modules/dataIntelligence.module';
 import { CostModule } from './modules/cost.module';
 import { AnalyticsModule } from './modules/analytics.module';
 import { IllustrationsModule } from './modules/illustrations.module';
+import { LearningModule } from './modules/learning.module';
 
 /**
  * OpenStrand SDK configuration
@@ -86,6 +87,10 @@ export class OpenStrandSDK {
    * Illustration generation and batch workflows.
    */
   public illustrations: IllustrationsModule;
+  /**
+   * Learning materials: flashcards, quizzes, analytics-to-study generation.
+   */
+  public learning: LearningModule;
 
   constructor(config: OpenStrandSDKConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, ''); // Remove trailing slash
@@ -103,6 +108,7 @@ export class OpenStrandSDK {
     this.cost = new CostModule(this);
     this.analytics = new AnalyticsModule(this);
     this.illustrations = new IllustrationsModule(this);
+    this.learning = new LearningModule(this);
   }
 
   /**
