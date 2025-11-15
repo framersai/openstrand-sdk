@@ -87,13 +87,14 @@ describe('extractiveSummarize', () => {
 
     // Selected sentences should appear in original order
     const summaryParts = result.summary.split(/[.!?]+/).filter(s => s.trim());
-    
+
     // Verify ordering by checking positions
     const selectedSentences = result.sentences
       .filter(s => result.summary.includes(s.text.slice(0, 20)))
       .sort((a, b) => a.position - b.position);
 
     expect(selectedSentences.length).toBeGreaterThan(0);
+    expect(summaryParts.length).toBe(selectedSentences.length);
   });
 
   it('throws on empty text', () => {

@@ -311,7 +311,8 @@ function extractEntities(text: string, stopWords: Set<string>): EntityCandidate[
   if (!text) return [];
 
   try {
-    // Try wink-nlp (Node.js/backend)
+    // Try wink-nlp (Node.js/backend). Use runtime require to avoid bundling in browser builds.
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { extractEntities: extractWithNER } = require('./ner');
     const entities = extractWithNER(text, { minConfidence: 0.6 });
     

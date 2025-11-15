@@ -142,35 +142,31 @@ export class OpenStrandSDK {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
-    try {
-      const fetchPromise = fetch(url.toString(), {
-        method,
-        headers,
-        body: options?.body ? JSON.stringify(options.body) : undefined,
-      });
+    const fetchPromise = fetch(url.toString(), {
+      method,
+      headers,
+      body: options?.body ? JSON.stringify(options.body) : undefined,
+    });
 
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(
-          () => reject(new OpenStrandSDKError('Request timed out', 408)),
-          this.timeout,
-        );
-      });
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(
+        () => reject(new OpenStrandSDKError('Request timed out', 408)),
+        this.timeout,
+      );
+    });
 
-      const response = await Promise.race([fetchPromise, timeoutPromise]);
+    const response = await Promise.race([fetchPromise, timeoutPromise]);
 
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: response.statusText }));
-        throw new OpenStrandSDKError(
-          error.message || `HTTP ${response.status}`,
-          response.status,
-          error
-        );
-      }
-
-      return response.json();
-    } catch (err: any) {
-      throw err;
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: response.statusText }));
+      throw new OpenStrandSDKError(
+        error.message || `HTTP ${response.status}`,
+        response.status,
+        error
+      );
     }
+
+    return response.json();
   }
 
   /**

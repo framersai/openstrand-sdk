@@ -17,15 +17,7 @@
  * @module SQLStorageAdapter
  */
 
-import type {
-  Strand,
-  StrandLink,
-  StrandHierarchy,
-  StrandScope,
-  User,
-  Team,
-  Visualization
-} from '../types';
+import type { Strand, StrandLink } from '../types';
 
 /**
  * Database provider types
