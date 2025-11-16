@@ -21,12 +21,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: install dependencies
         run: |
           corepack enable
-          yarn install --immutable
+          yarn install
 
       - name: release
         env:
