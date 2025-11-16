@@ -166,7 +166,7 @@ export interface StructuredLLMRequest<TInput extends z.ZodType, TOutput extends 
   model?: string;
   
   /** Options */
-  options?: Partial<LLMRequestOptions>;
+  options?: Partial<LLMRequestOptions<string>>;
 }
 
 /**

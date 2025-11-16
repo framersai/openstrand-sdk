@@ -111,19 +111,19 @@ export class LLMService {
     const validatedInput = request.inputSchema.parse(request.input);
     
     // Build prompts
-    const systemPrompt =
+    const systemPrompt: string | undefined =
       typeof request.systemPrompt === 'function'
         ? request.systemPrompt(validatedInput)
         : request.systemPrompt;
-        
-    const userPrompt =
+
+    const userPrompt: string =
       typeof request.userPrompt === 'function'
         ? request.userPrompt(validatedInput)
         : request.userPrompt;
     
     // Construct request
     const requestOptions: LLMRequestOptions<string> = {
-      input: userPrompt,
+      input: userPrompt as string,
       systemPrompt,
       model: request.model || selectedProvider.getConfig().defaultModel || 'gpt-3.5-turbo',
       json: true, // Force JSON mode
