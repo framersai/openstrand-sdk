@@ -1,3 +1,9 @@
+## [0.2.1](https://github.com/framersai/openstrand-sdk/compare/v0.2.0...v0.2.1) (2025-11-16)
+
+### Bug Fixes
+
+- **sdk:** document publish workflow usage ([7994479](https://github.com/framersai/openstrand-sdk/commit/799447990216bc6b854150593a5b778567e91085))
+
 ## [0.2.0](https://github.com/framersai/openstrand-sdk/compare/v0.1.0...v0.2.0) (2025-11-16)
 
 ### Features
