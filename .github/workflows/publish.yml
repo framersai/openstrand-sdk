@@ -1,8 +1,9 @@
 name: Publish to npm
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ['release sdk']
+    types: [completed]
   workflow_dispatch:
     inputs:
       tag:
@@ -11,17 +12,23 @@ on:
 
 jobs:
   publish:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Resolve tag or ref
         id: resolved
         run: |
-          if [ -n "${{ github.event.release.tag_name }}" ]; then
-            REF="${{ github.event.release.tag_name }}"
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            REF=$(git describe --tags "$(git rev-list --tags --max-count=1)")
           elif [ -n "${{ github.event.inputs.tag }}" ]; then
             REF="${{ github.event.inputs.tag }}"
           elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
@@ -30,12 +37,10 @@ jobs:
             REF="${GITHUB_REF}"
           fi
           echo "ref=$REF" >> "$GITHUB_OUTPUT"
+          echo "Publishing ref: $REF"
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ steps.resolved.outputs.ref }}
+      - name: Checkout resolved ref
+        run: git checkout "${{ steps.resolved.outputs.ref }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
