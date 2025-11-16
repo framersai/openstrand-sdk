@@ -28,9 +28,10 @@ module.exports = {
 			},
 		],
 		[
-			'@semantic-release/npm',
+			'@semantic-release/exec',
 			{
-				npmPublish: true,
+				prepareCmd: 'npm version ${nextRelease.version} --no-git-tag-version',
+				publishCmd: 'npm publish --access public --provenance',
 			},
 		],
 		[
