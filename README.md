@@ -20,6 +20,12 @@
   <a href="https://github.com/framersai/openstrand-monorepo/actions/workflows/test.yml">
     <img src="https://img.shields.io/github/actions/workflow/status/framersai/openstrand-monorepo/test.yml?style=flat-square&logo=github&label=tests" alt="Tests" />
   </a>
+  <a href="https://github.com/framersai/openstrand-sdk/actions/workflows/release.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/framersai/openstrand-sdk/release.yml?style=flat-square&logo=github&label=release" alt="Release workflow" />
+  </a>
+  <a href="https://github.com/framersai/openstrand-sdk/actions/workflows/publish.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/framersai/openstrand-sdk/publish.yml?style=flat-square&logo=github&label=publish" alt="Publish workflow" />
+  </a>
   <a href="https://github.com/framersai/openstrand-monorepo/blob/master/packages/openstrand-sdk/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License: MIT" />
   </a>
@@ -28,9 +34,13 @@
   <a href="https://bundlephobia.com/package/@framers/openstrand-sdk">
     <img src="https://img.shields.io/bundlephobia/minzip/@framers/openstrand-sdk?style=flat-square&label=bundle%20size" alt="Bundle size" />
   </a>
+  <a href="https://codecov.io/gh/framersai/openstrand-sdk">
+    <img src="https://codecov.io/gh/framersai/openstrand-sdk/branch/master/graph/badge.svg?style=flat-square" alt="Code coverage" />
+  </a>
   <a href="https://github.com/framersai/openstrand-monorepo">
     <img src="https://img.shields.io/github/stars/framersai/openstrand-monorepo?style=flat-square&logo=github" alt="GitHub stars" />
   </a>
+  <img src="https://img.shields.io/badge/npm-Trusted%20Publisher-%23CB3837?style=flat-square&logo=npm" alt="npm Trusted Publisher" />
 </p>
 
 ---

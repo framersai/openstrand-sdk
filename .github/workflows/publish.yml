@@ -1,62 +1,59 @@
-name: Publish to npm (manual)
+name: Publish to npm
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to publish (e.g., v0.1.1)'
+        description: 'Tag to publish (e.g., v0.2.0)'
         required: false
 
 jobs:
   publish:
-    name: Publish @framers/openstrand-sdk
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
+      - name: Resolve tag or ref
+        id: resolved
+        run: |
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            REF="${{ github.event.release.tag_name }}"
+          elif [ -n "${{ github.event.inputs.tag }}" ]; then
+            REF="${{ github.event.inputs.tag }}"
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            REF="${GITHUB_REF#refs/tags/}"
+          else
+            REF="${GITHUB_REF}"
+          fi
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ steps.resolved.outputs.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Determine tag
-        id: tag
-        run: |
-          if [ -n "${{ github.event.release.tag_name }}" ]; then
-            TAG="${{ github.event.release.tag_name }}"
-          elif [ -n "${{ github.ref }}" ] && [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            TAG="${GITHUB_REF#refs/tags/}"
-          elif [ -n "${{ github.event.inputs.tag }}" ]; then
-            TAG="${{ github.event.inputs.tag }}"
-          else
-            echo "No tag provided from release, ref, or input." >&2
-            exit 1
-          fi
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "Using tag: $TAG"
-
-      - name: Verify tag matches package.json version
-        run: |
-          PKG_VER=$(node -p "require('./package.json').version")
-          if [ "v$PKG_VER" != "${{ steps.tag.outputs.tag }}" ]; then
-            echo "Tag ${{ steps.tag.outputs.tag }} does not match package.json version v$PKG_VER" >&2
-            exit 1
-          fi
-
       - name: Install dependencies
-        run: yarn install
+        run: |
+          corepack enable
+          yarn install
 
       - name: Build
         run: yarn build
 
       - name: Publish to npm
-        run: yarn npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: npm publish --access public --provenance
 
 
