@@ -239,6 +239,23 @@ npm run docs
 
 ---
 
+## Release Automation
+
+- The `release sdk` GitHub Action (`.github/workflows/release.yml`) runs on every push to `master`/`main`.
+- semantic-release analyzes commits, bumps the version, generates release notes, and publishes to npm.
+- Publishing uses **npm Trusted Publishing (OIDC)** – no long-lived `NPM_TOKEN` secrets are stored in CI.
+- Provenance metadata is enabled via `publishConfig.provenance = true`, so every npm release is signed by GitHub.
+
+Manual fallback (maintainers only):
+
+```bash
+yarn install
+yarn build
+npm publish --access public --provenance
+```
+
+If you need to publish locally, ensure your npm account has access to `@framers/*` and that 2FA is set to **Authorization only** or you are using a granular publish token with bypass 2FA enabled.
+
 ## Links
 
 - Repository: https://github.com/framersai/openstrand-monorepo

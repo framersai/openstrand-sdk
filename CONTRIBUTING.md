@@ -113,17 +113,27 @@ packages/openstrand-sdk/
 Releases are automated via semantic-release:
 
 1. Merge PRs to `master`
-2. semantic-release analyzes commits
-3. Determines version bump (major/minor/patch)
-4. Updates CHANGELOG.md
-5. Publishes to npm
-6. Creates GitHub release
+2. `.github/workflows/release.yml` runs semantic-release
+3. Version bump + changelog + GitHub release
+4. Publish to npm using **Trusted Publishing (OIDC)** – no `NPM_TOKEN` required
 
-Manual publish (maintainers only):
+Because trusted publishing is enabled, every npm release carries provenance metadata (`publishConfig.provenance = true`) signed by GitHub Actions.
+
+### Manual publish (maintainers only)
+
+Only needed if CI is unavailable:
+
 ```bash
-npm run build
-npm publish --access public
+yarn install
+yarn build
+npm publish --access public --provenance
 ```
+
+Requirements:
+
+- Your npm account must be in the `openstrand` org with publish rights
+- 2FA should be set to “Authorization only” **or** you must use a granular token with bypass-2FA enabled
+- Manual publishes should be followed by `yarn release` (semantic-release) to keep changelog/tags consistent
 
 ## Getting Help
 
