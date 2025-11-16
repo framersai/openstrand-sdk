@@ -57,6 +57,7 @@ export * from './modules/pomodoro.module';
 export * from './modules/productivity.module';
 export * from './modules/gamification.module';
 export * from './modules/export.module';
+export * from './modules/voice.module';
 export * from './storage';
 
 // Explicitly export data intelligence types & functions for backend use

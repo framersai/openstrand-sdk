@@ -41,6 +41,7 @@ import { PomodoroModule } from './modules/pomodoro.module';
 import { ProductivityModule } from './modules/productivity.module';
 import { GamificationModule } from './modules/gamification.module';
 import { ExportModule } from './modules/export.module';
+import { VoiceModule } from './modules/voice.module';
 
 /**
  * OpenStrand SDK configuration
@@ -111,6 +112,10 @@ export class OpenStrandSDK {
    * Universal export functionality (v1.4)
    */
   public export: ExportModule;
+  /**
+   * Voice services: TTS/STT (v1.6)
+   */
+  public voice: VoiceModule;
 
   constructor(config: OpenStrandSDKConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, ''); // Remove trailing slash
@@ -133,6 +138,7 @@ export class OpenStrandSDK {
     this.productivity = new ProductivityModule(this);
     this.gamification = new GamificationModule(this);
     this.export = new ExportModule(this);
+    this.voice = new VoiceModule(this);
   }
 
   /**
