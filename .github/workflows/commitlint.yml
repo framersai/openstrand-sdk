@@ -29,3 +29,4 @@ jobs:
         with:
           configFile: .commitlintrc.cjs
 
+

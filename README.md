@@ -247,6 +247,261 @@ npm run docs
 
 ---
 
+---
+
+## Learning & Spaced Repetition (v1.3+)
+
+### Flashcards
+
+```ts
+// Create flashcard
+const card = await sdk.learning.createFlashcard({
+  front: { text: 'What is a qubit?' },
+  back: { text: 'A quantum bit - basic unit of quantum information' },
+  deck: 'Quantum Computing',
+  tags: ['quantum', 'physics']
+});
+
+// Generate flashcards from strand (with templates)
+const cards = await sdk.learning.generateFlashcards('strand-123', {
+  count: 10,
+  template: 'cloze', // definition, cloze, qa, image_recall, dataset_numeric, minimal, auto
+  complexity: 3, // 1-5 scale
+  allowImages: true
+});
+
+// Get due cards for study
+const dueCards = await sdk.learning.getDueFlashcards({ deck: 'Biology', limit: 20 });
+
+// Record study (updates spaced repetition)
+const updated = await sdk.learning.recordStudy({
+  flashcardId: 'card-123',
+  rating: 'good', // again, hard, good, easy
+  timeSpentMs: 5000
+});
+
+console.log(`Next review in ${updated.interval} days`);
+```
+
+### Quizzes
+
+```ts
+// Generate quiz from strands
+const quiz = await sdk.learning.generateQuiz(['strand-1', 'strand-2'], {
+  questionCount: 10,
+  template: 'mixed_depth', // mcq_overview, mixed_depth, concept_check, practical_code, minimal, auto
+  complexity: 3,
+  allowImages: true
+});
+
+// Start quiz attempt
+const attempt = await sdk.learning.startQuizAttempt('quiz-123');
+
+// Submit answers
+const results = await sdk.learning.submitQuizAttempt(attempt.attemptId, [
+  { questionId: 'q1', answer: 'A', timeSpentMs: 5000 },
+  { questionId: 'q2', answer: 'true', timeSpentMs: 3000 }
+]);
+
+console.log(`Score: ${results.score}% | Passed: ${results.passed}`);
+```
+
+---
+
+## Adaptive Learning (v1.4)
+
+### Adaptive Quiz (Leitner System)
+
+```ts
+// Start adaptive session
+const session = await sdk.learning.startAdaptiveSession('quiz-123');
+console.log('First question:', session.firstQuestion);
+console.log('Progress:', session.progress); // bucket0: 5, bucket1: 3, etc.
+
+// Record answer (updates Leitner buckets)
+const result = await sdk.learning.recordAdaptiveAnswer('quiz-123', {
+  questionId: 'q1',
+  isCorrect: true,
+  timeSpentMs: 5000
+});
+
+console.log(`Moved to bucket ${result.newBucket}`);
+console.log('Next question:', result.nextQuestion);
+
+// Get "Explain Why" tutoring
+const explanation = await sdk.learning.explainAnswer('quiz-123', {
+  questionId: 'q1',
+  userAnswer: 'B',
+  mode: 'socratic' // concise, detailed, socratic
+});
+
+console.log(explanation.explanation);
+```
+
+### Socratic Insights
+
+```ts
+// Generate Socratic questions for any content
+const insights = await sdk.learning.generateSocraticInsights({
+  contentId: 'strand-123',
+  contentType: 'strand', // flashcard, quiz, strand, loom, weave
+  depth: 'deep', // quick, medium, deep
+  focusArea: 'causality',
+  maxQuestions: 7
+});
+
+console.log('Socratic questions:', insights.questions);
+console.log('Reflection prompts:', insights.reflectionPrompts);
+console.log('Deeper topics:', insights.deeperTopics);
+console.log(`Cost: $${insights.cost}`);
+```
+
+---
+
+## Productivity & Pomodoro (v1.3)
+
+### Pomodoro Timer
+
+```ts
+// Start session
+const session = await sdk.pomodoro.start({
+  preset: 'classic', // classic (25min), short (15min), long (50min), custom
+  label: 'Deep work on algorithms',
+  strandId: 'strand-123'
+});
+
+// Pause/resume
+await sdk.pomodoro.pause(session.id);
+await sdk.pomodoro.resume(session.id);
+
+// Complete
+await sdk.pomodoro.complete(session.id, 'Very productive!');
+
+// Get stats
+const stats = await sdk.pomodoro.getStats(30);
+console.log(`${stats.totalSessions} sessions, ${stats.totalMinutes} minutes`);
+```
+
+### Productivity Analytics
+
+```ts
+// Get dashboard
+const dashboard = await sdk.productivity.getDashboard();
+console.log(`Current streak: ${dashboard.streaks.current} days`);
+console.log(`Today's study time: ${dashboard.today.studyMinutes}min`);
+
+// Get streak history (for GitHub-style heatmap)
+const history = await sdk.productivity.getStreakHistory(365);
+
+// Get insights
+const insights = await sdk.productivity.getInsights();
+insights.forEach(insight => {
+  console.log(`${insight.type}: ${insight.message}`);
+});
+```
+
+---
+
+## Gamification (v1.4)
+
+### Badges & Achievements
+
+```ts
+// List all badges (with progress)
+const badges = await sdk.gamification.listBadges();
+const earned = badges.filter(b => b.earned);
+
+// Get user's earned badges
+const myBadges = await sdk.gamification.getUserBadges();
+
+// Check and auto-award badges
+const newBadges = await sdk.gamification.checkBadges();
+if (newBadges.length > 0) {
+  console.log('New badges earned:', newBadges.map(b => b.name));
+}
+```
+
+### Leaderboards
+
+```ts
+// Get team leaderboard
+const leaderboard = await sdk.gamification.getLeaderboard('team-123', {
+  category: 'overall', // overall, flashcards, quizzes, pomodoro, streak
+  period: 'weekly', // weekly, monthly, all_time
+  limit: 50
+});
+
+// Opt in/out
+await sdk.gamification.optInLeaderboard('team-123');
+await sdk.gamification.optOutLeaderboard('team-123');
+
+// Get user's position
+const position = await sdk.gamification.getUserPosition('team-123', {
+  category: 'streak'
+});
+console.log(`You are rank #${position.rank} with ${position.score} points`);
+```
+
+### QR Code Sharing
+
+```ts
+// Create shareable link with QR code
+const share = await sdk.gamification.createShare({
+  contentId: 'quiz-123',
+  contentType: 'quiz',
+  isPublic: true,
+  allowClone: true
+});
+
+console.log('Share URL:', share.shareUrl);
+console.log('QR Code:', share.qrCodeUrl);
+console.log('Short code:', share.shareCode);
+
+// Get shared content
+const shared = await sdk.gamification.getShare('abc123xy');
+
+// Clone to your library
+const cloned = await sdk.gamification.cloneShare('abc123xy');
+console.log(`Cloned ${cloned.type}: ${cloned.id}`);
+```
+
+---
+
+## Universal Export (v1.4)
+
+Export any content type to multiple formats:
+
+```ts
+// Export flashcard deck to Anki
+const ankiBuffer = await sdk.export.flashcardDeck('Biology', {
+  format: 'anki',
+  includeImages: true
+});
+await fs.writeFile('biology.apkg', ankiBuffer);
+
+// Export quiz to PDF
+const pdfBuffer = await sdk.export.quiz('quiz-123', {
+  format: 'pdf',
+  includeAnswers: true
+});
+
+// Export journal to Markdown
+const mdBuffer = await sdk.export.journal('2024-01-01', '2024-12-31', {
+  format: 'markdown',
+  markdownFlavor: 'obsidian'
+});
+
+// Export strand (already supported)
+const strandBuffer = await sdk.export.strand('strand-123', {
+  format: 'docx',
+  includeMetadata: true
+});
+```
+
+**Supported formats**: PDF, DOCX, Markdown, HTML, JSON, CSV, PNG, Anki, ZIP
+
+---
+
 <p align="center">
   <strong>Built by</strong><br/>
   <a href="https://frame.dev">

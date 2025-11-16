@@ -53,6 +53,10 @@ export * from './modules/cost.module';
 export * from './modules/analytics.module';
 export * from './modules/illustrations.module';
 export * from './modules/learning.module';
+export * from './modules/pomodoro.module';
+export * from './modules/productivity.module';
+export * from './modules/gamification.module';
+export * from './modules/export.module';
 export * from './storage';
 
 // Explicitly export data intelligence types & functions for backend use

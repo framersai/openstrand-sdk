@@ -37,6 +37,10 @@ import { CostModule } from './modules/cost.module';
 import { AnalyticsModule } from './modules/analytics.module';
 import { IllustrationsModule } from './modules/illustrations.module';
 import { LearningModule } from './modules/learning.module';
+import { PomodoroModule } from './modules/pomodoro.module';
+import { ProductivityModule } from './modules/productivity.module';
+import { GamificationModule } from './modules/gamification.module';
+import { ExportModule } from './modules/export.module';
 
 /**
  * OpenStrand SDK configuration
@@ -91,6 +95,22 @@ export class OpenStrandSDK {
    * Learning materials: flashcards, quizzes, analytics-to-study generation.
    */
   public learning: LearningModule;
+  /**
+   * Pomodoro timer sessions and tracking (v1.3)
+   */
+  public pomodoro: PomodoroModule;
+  /**
+   * Productivity analytics and insights (v1.3)
+   */
+  public productivity: ProductivityModule;
+  /**
+   * Gamification: badges, leaderboards, sharing (v1.4)
+   */
+  public gamification: GamificationModule;
+  /**
+   * Universal export functionality (v1.4)
+   */
+  public export: ExportModule;
 
   constructor(config: OpenStrandSDKConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, ''); // Remove trailing slash
@@ -109,6 +129,10 @@ export class OpenStrandSDK {
     this.analytics = new AnalyticsModule(this);
     this.illustrations = new IllustrationsModule(this);
     this.learning = new LearningModule(this);
+    this.pomodoro = new PomodoroModule(this);
+    this.productivity = new ProductivityModule(this);
+    this.gamification = new GamificationModule(this);
+    this.export = new ExportModule(this);
   }
 
   /**
@@ -185,6 +209,55 @@ export class OpenStrandSDK {
       token: this.token,
       timeout: this.timeout,
     };
+  }
+
+  /**
+   * Make raw HTTP request (for binary responses like file downloads)
+   * 
+   * @internal
+   */
+  async requestRaw(
+    method: string,
+    path: string,
+    options?: {
+      body?: unknown;
+      query?: Record<string, string>;
+      headers?: Record<string, string>;
+    }
+  ): Promise<Response> {
+    const url = new URL(`${this.baseUrl}${path}`);
+
+    if (options?.query) {
+      Object.entries(options.query).forEach(([key, value]) => {
+        url.searchParams.append(key, value);
+      });
+    }
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    };
+
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    const response = await fetch(url.toString(), {
+      method,
+      headers,
+      body: options?.body ? JSON.stringify(options.body) : undefined,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: response.statusText }));
+      throw new OpenStrandSDKError(
+        error.message || `HTTP ${response.status}`,
+        response.status,
+        error
+      );
+    }
+
+    return response;
   }
 }
 
