@@ -2,11 +2,11 @@
 
 <p align="center">
   <a href="https://openstrand.ai">
-    <img alt="OpenStrand" height="72" src="./assets/openstrand-logo.svg">
+    <img alt="OpenStrand" height="72" src="./logos/openstrand-logo.svg">
   </a>
   <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
   <a href="https://frame.dev">
-    <img alt="Frame.dev" height="56" src="./assets/frame-dev.svg">
+    <img alt="Frame.dev" height="56" src="./logos/frame-dev.svg">
   </a>
 </p>
 
@@ -548,7 +548,7 @@ const strandBuffer = await sdk.export.strand('strand-123', {
 <p align="center">
   <strong>Built by</strong><br/>
   <a href="https://frame.dev">
-    <img src="./assets/frame-dev.svg" alt="Frame.dev" height="32" />
+    <img src="./logos/frame-dev.svg" alt="Frame.dev" height="32" />
   </a>
 </p>
 
