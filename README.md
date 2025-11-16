@@ -255,6 +255,7 @@ npm run docs
 - semantic-release analyzes commits, bumps the version, generates release notes, and publishes to npm.
 - Publishing uses **npm Trusted Publishing (OIDC)** – no long-lived `NPM_TOKEN` secrets are stored in CI.
 - Provenance metadata is enabled via `publishConfig.provenance = true`, so every npm release is signed by GitHub.
+- A dedicated `Publish to npm` workflow listens for the GitHub Release event and handles `npm publish --provenance`. You can also run it manually from the Actions tab by passing an existing tag (e.g., `v0.2.0`).
 
 Manual fallback (maintainers only):
 
