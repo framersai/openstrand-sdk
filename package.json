@@ -1,6 +1,6 @@
 {
   "name": "@framers/openstrand-sdk",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "TypeScript SDK for the OpenStrand knowledge graph APIs.",
   "author": "Framers <team@frame.dev>",
   "license": "MIT",

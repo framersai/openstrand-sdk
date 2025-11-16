@@ -1,3 +1,9 @@
+## [0.2.2](https://github.com/framersai/openstrand-sdk/compare/v0.2.1...v0.2.2) (2025-11-16)
+
+### Bug Fixes
+
+- **sdk:** prevent badge row wrapping ([a85c7ec](https://github.com/framersai/openstrand-sdk/commit/a85c7ec2d7c71f6a7e60d20f50d3a4fa105e0311))
+
 ## [0.2.1](https://github.com/framersai/openstrand-sdk/compare/v0.2.0...v0.2.1) (2025-11-16)
 
 ### Bug Fixes
