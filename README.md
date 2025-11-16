@@ -1,13 +1,25 @@
 # @framers/openstrand-sdk
 
 <p align="center">
-  <a href="https://github.com/framersai/openstrand-monorepo">
+  <a href="https://openstrand.ai">
     <img alt="OpenStrand" height="72" src="./assets/openstrand-logo.svg">
+  </a>
+  <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+  <a href="https://frame.dev">
+    <img alt="Frame.dev" height="56" src="./assets/frame-dev.svg">
   </a>
 </p>
 
 <p align="center">
   Official TypeScript SDK for the OpenStrand API. Works in Node.js and modern browsers, ships with full type coverage, and mirrors backend contracts.
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@framers/openstrand-sdk"><strong>npm</strong></a> ·
+  <a href="https://openstrand.ai"><strong>Product</strong></a> ·
+  <a href="https://openstrand.ai/docs"><strong>Docs</strong></a> ·
+  <a href="https://framersai.notion.site/OpenStrand-Changelog-62f997f3c2c1422e8ac89904cb480c3f"><strong>Changelog</strong></a> ·
+  <a href="https://github.com/framersai/openstrand-monorepo/issues"><strong>Issues</strong></a>
 </p>
 
 <p align="center">
