@@ -19,7 +19,7 @@
   <a href="https://openstrand.ai"><strong>Product</strong></a> ·
   <a href="https://openstrand.ai/docs"><strong>Docs</strong></a> ·
   <a href="https://framersai.notion.site/OpenStrand-Changelog-62f997f3c2c1422e8ac89904cb480c3f"><strong>Changelog</strong></a> ·
-  <a href="https://github.com/framersai/openstrand-monorepo/issues"><strong>Issues</strong></a>
+  <a href="https://github.com/framersai/openstrand-sdk/issues"><strong>Issues</strong></a>
 </p>
 
 <p align="center">
@@ -29,10 +29,10 @@
   <a href="https://www.npmjs.com/package/@framers/openstrand-sdk">
     <img src="https://img.shields.io/npm/dm/@framers/openstrand-sdk?style=flat-square&logo=npm&color=%23CB3837" alt="npm downloads" />
   </a>
-  <a href="https://github.com/framersai/openstrand-monorepo/actions/workflows/test.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/framersai/openstrand-monorepo/test.yml?style=flat-square&logo=github&label=tests" alt="Tests" />
+  <a href="https://github.com/framersai/openstrand-sdk/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/framersai/openstrand-sdk/ci.yml?style=flat-square&logo=github&label=tests" alt="Tests" />
   </a>
-  <a href="https://github.com/framersai/openstrand-monorepo/blob/master/packages/openstrand-sdk/LICENSE">
+  <a href="https://github.com/framersai/openstrand-sdk/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License: MIT" />
   </a>
   <img src="https://img.shields.io/badge/TypeScript-5.3-blue?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -40,8 +40,8 @@
   <a href="https://bundlephobia.com/package/@framers/openstrand-sdk">
     <img src="https://img.shields.io/bundlephobia/minzip/@framers/openstrand-sdk?style=flat-square&label=bundle%20size" alt="Bundle size" />
   </a>
-  <a href="https://github.com/framersai/openstrand-monorepo">
-    <img src="https://img.shields.io/github/stars/framersai/openstrand-monorepo?style=flat-square&logo=github" alt="GitHub stars" />
+  <a href="https://github.com/framersai/openstrand-sdk">
+    <img src="https://img.shields.io/github/stars/framersai/openstrand-sdk?style=flat-square&logo=github" alt="GitHub stars" />
   </a>
 </p>
 
@@ -284,9 +284,9 @@ If you need to publish locally, ensure your npm account has access to `@framers/
 
 ## Links
 
-- Repository: https://github.com/framersai/openstrand-monorepo
-- Issues: https://github.com/framersai/openstrand-monorepo/issues
-- Documentation: https://github.com/framersai/openstrand-monorepo/tree/master/docs
+- Repository: https://github.com/framersai/openstrand-sdk
+- Issues: https://github.com/framersai/openstrand-sdk/issues
+- Documentation: https://github.com/framersai/openstrand-sdk/tree/master/docs
 
 ---
 
