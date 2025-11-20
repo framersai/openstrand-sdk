@@ -33,6 +33,7 @@
     "format": "node ../../scripts/run-prettier.mjs --write",
     "format:check": "node ../../scripts/run-prettier.mjs --check",
     "test": "vitest run",
+    "test:since": "vitest run --changed origin/master",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:unit": "vitest run",
